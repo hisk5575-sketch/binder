@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEVADA Binder Pro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
+    <style>
+        :root{--primary:#2c82c9;--accent:#fac51c;--danger:#e74c3c;--success:#2ecc71;--bg:#0a0e1a;--card:#111827;--text:#fff;--text2:#94a3b8;--border:#334155}
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:Inter,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+        .bg{position:fixed;inset:0;background:radial-gradient(circle at 20% 50%,rgba(44,130,201,.15) 0%,transparent 50%),radial-gradient(circle at 80% 80%,rgba(250,197,28,.1) 0%,transparent 50%);pointer-events:none;z-index:0}
+        .container{position:relative;z-index:10;max-width:1400px;margin:0 auto;padding:2rem}
+        header{display:flex;justify-content:space-between;align-items:center;margin-bottom:2rem;padding-bottom:1rem;border-bottom:1px solid var(--border)}
+        .logo{display:flex;align-items:center;gap:1rem}
+        .logo-icon{width:50px;height:50px;background:linear-gradient(135deg,var(--primary),var(--accent));border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.5rem;font-weight:800}
+        .logo-text h1{font-size:1.5rem;background:linear-gradient(135deg,#fff,var(--primary));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+        .logo-text p{color:var(--text2);font-size:.875rem}
+        .badge{background:rgba(44,130,201,.1);border:1px solid var(--primary);padding:.5rem 1rem;border-radius:50px;color:var(--primary);font-weight:600;font-size:.875rem}
+        .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin-bottom:2rem}
+        .stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem;display:flex;align-items:center;gap:1rem}
+        .stat-icon{width:48px;height:48px;background:rgba(44,130,201,.1);border:1px solid var(--primary);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.5rem}
+        .stat h3{font-size:1.75rem}
+        .stat p{color:var(--text2);font-size:.875rem}
+        .toolbar{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:1rem;margin-bottom:2rem;display:flex;justify-content:space-between;flex-wrap:wrap;gap:1rem}
+        input,select,textarea{background:#1f2937;border:1px solid var(--border);color:var(--text);padding:.75rem 1rem;border-radius:8px;outline:none;font-family:inherit}
+        input:focus,select:focus,textarea:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(44,130,201,.2)}
+        .btn{padding:.75rem 1.25rem;border:none;border-radius:8px;font-weight:600;cursor:pointer;transition:all .3s;display:inline-flex;align-items:center;gap:.5rem}
+        .btn-primary{background:var(--primary);color:#fff}
+        .btn-primary:hover{transform:translateY(-2px);box-shadow:0 4px 15px rgba(44,130,201,.4)}
+        .btn-accent{background:var(--accent);color:var(--bg)}
+        .btn-accent:hover{transform:translateY(-2px);box-shadow:0 4px 15px rgba(250,197,28,.4)}
+        .btn-secondary{background:#1f2937;color:var(--text2);border:1px solid var(--border)}
+        .btn-secondary:hover{border-color:var(--primary);color:#fff}
+        .btn-danger{background:rgba(231,76,60,.1);color:var(--danger);border:1px solid var(--danger)}
+        .btn-danger:hover{background:var(--danger);color:#fff}
+        .tabs{display:flex;gap:.5rem;margin-bottom:2rem;border-bottom:2px solid var(--border);padding-bottom:0}
+        .tab{padding:.875rem 1.5rem;background:transparent;border:none;color:var(--text2);font-weight:600;cursor:pointer;border-radius:12px 12px 0 0;transition:all .3s;position:relative}
+        .tab.active{color:var(--primary);background:rgba(44,130,201,.1)}
+        .tab.active::after{content:'';position:absolute;bottom:-2px;left:0;right:0;height:2px;background:var(--primary);box-shadow:0 0 10px var(--primary)}
+        .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(350px,1fr));gap:1.5rem}
+        .card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:1.5rem;transition:all .3s;position:relative}
+        .card:hover{transform:translateY(-5px);border-color:var(--primary);box-shadow:0 10px 30px rgba(0,0,0,.5)}
+        .card.inactive{opacity:.6;filter:grayscale(.5)}
+        .card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem}
+        .slot{width:36px;height:36px;background:rgba(44,130,201,.1);border:1px solid var(--primary);border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700;font-family:'JetBrains Mono',monospace;color:var(--primary)}
+        .badges{display:flex;gap:.5rem}
+        .badge-type{padding:.25rem .75rem;border-radius:50px;font-size:.75rem;font-weight:600;text-transform:uppercase;border:1px solid}
+        .badge-system{background:rgba(46,204,113,.1);color:var(--success);border-color:var(--success)}
+        .badge-custom{background:rgba(250,197,28,.1);color:var(--accent);border-color:var(--accent)}
+        .command{font-family:'JetBrains Mono',monospace;font-size:1.125rem;color:var(--accent);margin-bottom:.5rem}
+        .content{background:#0f172a;border-radius:8px;padding:1rem;font-family:'JetBrains Mono',monospace;font-size:.875rem;color:var(--text2);border-left:3px solid var(--primary);line-height:1.6}
+        .content .v{color:var(--accent);background:rgba(250,197,28,.1);padding:.125rem .375rem;border-radius:4px}
+        .content .me{color:#c084fc;font-weight:600}
+        .content .do{color:#60a5fa;font-weight:600}
+        .card-footer{display:flex;justify-content:space-between;align-items:center;margin-top:1rem;padding-top:1rem;border-top:1px solid var(--border)}
+        .actions{display:flex;gap:.5rem}
+        .empty{text-align:center;padding:5rem;color:var(--text2);grid-column:1/-1}
+        .empty-icon{font-size:5rem;margin-bottom:1rem;opacity:.3}
+        .modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);backdrop-filter:blur(8px);z-index:1000;align-items:center;justify-content:center;padding:1rem}
+        .modal.active{display:flex}
+        .modal-content{background:var(--card);border:1px solid var(--border);border-radius:24px;width:100%;max-width:650px;max-height:90vh;overflow-y:auto;animation:slideUp .4s}
+        @keyframes slideUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+        .modal-header{padding:1.5rem;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;background:linear-gradient(135deg,rgba(44,130,201,.1),transparent)}
+        .modal-body{padding:1.5rem}
+        .form-group{margin-bottom:1.5rem}
+        .form-label{display:block;margin-bottom:.5rem;color:var(--text2);font-size:.9rem;font-weight:500}
+        .form-input,.form-select,.form-textarea{width:100%}
+        .form-textarea{min-height:120px;resize:vertical;font-family:'JetBrains Mono',monospace}
+        .toggle{display:flex;background:#1f2937;border-radius:8px;padding:.25rem;gap:.25rem}
+        .toggle-btn{flex:1;padding:.625rem 1rem;border:none;background:transparent;color:var(--text2);border-radius:6px;cursor:pointer;font-weight:600;transition:all .3s}
+        .toggle-btn.active{background:var(--primary);color:#fff}
+        .vars{background:linear-gradient(135deg,rgba(44,130,201,.1),rgba(250,197,28,.05));border:1px solid var(--primary);border-radius:8px;padding:1rem;margin-top:1rem}
+        .vars-title{color:var(--primary);font-weight:600;margin-bottom:.75rem;font-size:.875rem}
+        .var-chip{display:inline-flex;align-items:center;background:#1f2937;border:1px solid var(--border);padding:.375rem .75rem;border-radius:50px;font-family:'JetBrains Mono',monospace;font-size:.8rem;color:var(--accent);cursor:pointer;margin:.25rem;transition:all .2s}
+        .var-chip:hover{background:var(--primary);color:#fff;border-color:var(--primary)}
+        .preview{background:#0f172a;border:1px solid var(--border);border-radius:8px;padding:1rem;margin-top:1rem;display:none}
+        .preview.active{display:block}
+        .preview-content{font-family:'JetBrains Mono',monospace;font-size:.875rem;line-height:1.6}
+        .modal-footer{padding:1rem 1.5rem;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:.75rem;background:#0f172a}
+        .toast-container{position:fixed;top:1.5rem;right:1.5rem;z-index:9999;display:flex;flex-direction:column;gap:.75rem}
+        .toast{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:1rem;display:flex;align-items:center;gap:.75rem;box-shadow:0 10px 30px rgba(0,0,0,.5);animation:slideIn .4s;min-width:300px}
+        @keyframes slideIn{from{opacity:0;transform:translateX(100px)}to{opacity:1;transform:translateX(0)}}
+        .toast.success{border-left:4px solid var(--success)}
+        .toast.error{border-left:4px solid var(--danger)}
+        .toast-title{font-weight:600;margin-bottom:.25rem}
+        .toast-msg{font-size:.875rem;color:var(--text2)}
+        .fab{position:fixed;bottom:2rem;right:2rem;width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--accent));border:none;color:#fff;font-size:1.5rem;cursor:pointer;box-shadow:0 4px 20px rgba(44,130,201,.5);display:none}
+        @media(max-width:768px){.grid{grid-template-columns:1fr}.fab{display:flex;align-items:center;justify-content:center}}
+    </style>
+<base target="_blank">
+</head>
+<body>
+    <div class="bg"></div>
+    <div class="toast-container" id="toasts"></div>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <div class="logo-icon">N</div>
+                <div class="logo-text">
+                    <h1>NEVADA Binder Pro</h1>
+                    <p>Система управления РП-биндами</p>
+                </div>
+            </div>
+            <div class="badge">🎮 СЕРВЕР: NEVADA</div>
+        </header>
+
+        <div class="stats">
+            <div class="stat">
+                <div class="stat-icon">📦</div>
+                <div><h3 id="stTotal">0</h3><p>Всего биндов</p></div>
+            </div>
+            <div class="stat">
+                <div class="stat-icon" style="background:rgba(46,204,113,.1);border-color:var(--success)">✅</div>
+                <div><h3 id="stActive">0</h3><p>Активных</p></div>
+            </div>
+            <div class="stat">
+                <div class="stat-icon" style="background:rgba(250,197,28,.1);border-color:var(--accent)">⚡</div>
+                <div><h3 id="stSystem">0</h3><p>Системных</p></div>
+            </div>
+            <div class="stat">
+                <div class="stat-icon" style="background:rgba(192,132,252,.1);border-color:#c084fc">🎨</div>
+                <div><h3 id="stCustom">0</h3><p>Кастомных</p></div>
+            </div>
+        </div>
+
+        <div class="toolbar">
+            <input type="text" id="search" placeholder="🔍 Поиск биндов..." oninput="render()" style="width:300px">
+            <div style="display:flex;gap:.5rem">
+                <button class="btn btn-secondary" onclick="exportData()">💾 Экспорт</button>
+                <button class="btn btn-secondary" onclick="document.getElementById('file').click()">📁 Импорт</button>
+                <input type="file" id="file" style="display:none" accept=".json" onchange="importData(event)">
+                <button class="btn btn-accent" onclick="openModal()">+ Новый бинд</button>
+            </div>
+        </div>
+
+        <div class="tabs">
+            <button class="tab active" onclick="setTab('all',this)">Все</button>
+            <button class="tab" onclick="setTab('system',this)">Системные</button>
+            <button class="tab" onclick="setTab('custom',this)">Кастомные</button>
+            <button class="tab" onclick="setTab('active',this)">Активные</button>
+        </div>
+
+        <div class="grid" id="grid"></div>
+    </div>
+
+    <button class="fab" onclick="openModal()">+</button>
+
+    <div class="modal" id="modal" onclick="if(event.target===this)closeModal()">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>🎯 <span id="mTitle">Создание бинда</span></h3>
+                <button class="btn btn-secondary" onclick="closeModal()" style="padding:.5rem .75rem">×</button>
+            </div>
+            <div class="modal-body">
+                <form id="form" onsubmit="save(event)">
+                    <div class="form-group">
+                        <label class="form-label">Тип привязки</label>
+                        <div class="toggle">
+                            <button type="button" class="toggle-btn active" onclick="setType('system',this)">Системная</button>
+                            <button type="button" class="toggle-btn" onclick="setType('custom',this)">Кастомная</button>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Команда</label>
+                        <select class="form-select" id="sysCmd" style="display:block">
+                            <option value="/cuff">/cuff — Наручники</option>
+                            <option value="/uncuff">/uncuff — Снять наручники</option>
+                            <option value="/m">/m — Мегафон</option>
+                            <option value="/ticket">/ticket — Штраф</option>
+                            <option value="/heal">/heal — Лечение</option>
+                            <option value="/search">/search — Обыск</option>
+                            <option value="/takelic">/takelic — Лицензия</option>
+                            <option value="/arrest">/arrest — Арест</option>
+                            <option value="/su">/su — Розыск</option>
+                        </select>
+                        <input type="text" class="form-input" id="custCmd" placeholder="/check_pass" style="display:none">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Содержимое отыгровки</label>
+                        <textarea class="form-textarea" id="content" placeholder="/me надел наручники на {name}
+/do Наручники затянуты
+{name}, вы задержаны!"></textarea>
+                    </div>
+
+                    <div class="vars">
+                        <div class="vars-title">📋 Переменные (кликни для вставки):</div>
+                        <div>
+                            <span class="var-chip" onclick="ins('{id}')">{id}</span>
+                            <span class="var-chip" onclick="ins('{name}')">{name}</span>
+                            <span class="var-chip" onclick="ins('{time}')">{time}</span>
+                            <span class="var-chip" onclick="ins('{location}')">{location}</span>
+                            <span class="var-chip" onclick="ins('{faction}')">{faction}</span>
+                            <span class="var-chip" onclick="ins('{rank}')">{rank}</span>
+                        </div>
+                    </div>
+
+                    <div class="preview" id="preview">
+                        <div style="color:var(--text2);margin-bottom:.5rem;font-size:.875rem">👁 Предпросмотр:</div>
+                        <div class="preview-content" id="pContent"></div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal()">Отмена</button>
+                <button class="btn btn-secondary" onclick="prev()">👁 Превью</button>
+                <button class="btn btn-primary" onclick="document.getElementById('form').dispatchEvent(new Event('submit'))">💾 Сохранить</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let binders=JSON.parse(localStorage.getItem('nb'))||[
+            {id:1,slot:1,type:'system',command:'/cuff',content:'/me надел наручники на {name}
+/do Застегнул
+Задержан, {name}!',active:true},
+            {id:2,slot:2,type:'system',command:'/m',content:'/me взял мегафон
+Стоять! Полиция!',active:true},
+            {id:3,slot:3,type:'custom',command:'/check',content:'/me достал планшет
+Проверяю документы, {name}',active:true}
+        ];
+        let curType='system',curTab='all',editId=null;
+
+        function render(){
+            const g=document.getElementById('grid'),s=document.getElementById('search').value.toLowerCase();
+            let f=binders.filter(b=>{
+                let m=(b.command+b.content).toLowerCase().includes(s);
+                let t=curTab==='all'?true:curTab==='active'?b.active:b.type===curTab;
+                return m&&t;
+            });
+
+            if(f.length===0){g.innerHTML='<div class="empty"><div class="empty-icon">📭</div><h3>Ничего не найдено</h3></div>';return}
+
+            g.innerHTML=f.map(b=>`<div class="card ${b.active?'':'inactive'}">
+                <div class="card-header">
+                    <div style="display:flex;align-items:center;gap:.75rem">
+                        <div class="slot">${b.slot}</div>
+                        <div class="badges">
+                            <span class="badge-type badge-${b.type}">${b.type==='system'?'Сист':'Кастом'}</span>
+                            ${!b.active?'<span class="badge-type" style="background:rgba(148,163,184,.1);color:var(--text2);border-color:var(--border)">Выкл</span>':''}
+                        </div>
+                    </div>
+                </div>
+                <div class="command">${b.command}</div>
+                <div class="content">${highlight(b.content)}</div>
+                <div class="card-footer">
+                    <span style="color:var(--text2);font-size:.875rem">${new Date(b.id).toLocaleDateString()}</span>
+                    <div class="actions">
+                        <button class="btn btn-secondary" style="padding:.5rem" onclick="edit(${b.id})">✏️</button>
+                        <button class="btn btn-secondary" style="padding:.5rem" onclick="toggle(${b.id})">${b.active?'⏸':'▶'}</button>
+                        <button class="btn btn-danger" style="padding:.5rem" onclick="del(${b.id})">🗑</button>
+                    </div>
+                </div>
+            </div>`).join('');
+            updateStats();
+        }
+
+        function highlight(t){
+            return t.replace(/\{([^}]+)\}/g,'<span class="v">{$1}</span>')
+                   .replace(/\/me/g,'<span class="me">/me</span>')
+                   .replace(/\/do/g,'<span class="do">/do</span>')
+                   .replace(/
+/g,'<br>');
+        }
+
+        function updateStats(){
+            document.getElementById('stTotal').textContent=binders.length;
+            document.getElementById('stActive').textContent=binders.filter(b=>b.active).length;
+            document.getElementById('stSystem').textContent=binders.filter(b=>b.type==='system').length;
+            document.getElementById('stCustom').textContent=binders.filter(b=>b.type==='custom').length;
+        }
+
+        function openModal(id=null){
+            editId=id;
+            document.getElementById('mTitle').textContent=id?'Редактирование':'Создание бинда';
+            if(id){
+                let b=binders.find(x=>x.id===id);
+                curType=b.type;
+                updateType();
+                if(b.type==='system')document.getElementById('sysCmd').value=b.command;
+                else document.getElementById('custCmd').value=b.command;
+                document.getElementById('content').value=b.content;
+            }else{
+                document.getElementById('form').reset();
+                curType='system';
+                updateType();
+            }
+            document.getElementById('preview').classList.remove('active');
+            document.getElementById('modal').classList.add('active');
+        }
+
+        function closeModal(){document.getElementById('modal').classList.remove('active');editId=null}
+        function setType(t,btn){curType=t;document.querySelectorAll('.toggle-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');updateType()}
+        function updateType(){document.getElementById('sysCmd').style.display=curType==='system'?'block':'none';document.getElementById('custCmd').style.display=curType==='custom'?'block':'none'}
+        function ins(v){const t=document.getElementById('content'),s=t.selectionStart,e=t.selectionEnd,val=t.value;t.value=val.substring(0,s)+v+val.substring(e);t.selectionStart=t.selectionEnd=s+v.length;t.focus()}
+
+        function prev(){
+            const c=document.getElementById('content').value;
+            if(!c)return;
+            const sim=c.replace(/{id}/g,'42').replace(/{name}/g,'Ivan_Ivanov').replace(/{time}/g,'14:30').replace(/{location}/g,'LS').replace(/{faction}/g,'LSPD').replace(/{rank}/g,'Officer');
+            document.getElementById('pContent').innerHTML=sim.split('
+').map(l=>`<div style="margin:.25rem 0">${l}</div>`).join('');
+            document.getElementById('preview').classList.add('active');
+        }
+
+        function save(e){
+            e.preventDefault();
+            const cmd=curType==='system'?document.getElementById('sysCmd').value:document.getElementById('custCmd').value.trim();
+            const cont=document.getElementById('content').value.trim();
+            if(!cmd||!cont){toast('error','Ошибка','Заполните все поля');return}
+            if(curType==='custom'&&!cmd.startsWith('/')){toast('error','Ошибка','Команда должна начинаться с /');return}
+
+            if(editId){
+                let b=binders.find(x=>x.id===editId);
+                b.type=curType;b.command=cmd;b.content=cont;
+                toast('success','Готово','Бинд обновлен');
+            }else{
+                binders.push({id:Date.now(),slot:getSlot(),type:curType,command:cmd,content:cont,active:true});
+                toast('success','Готово','Бинд создан');
+            }
+            localStorage.setItem('nb',JSON.stringify(binders));
+            render();closeModal();
+        }
+
+        function getSlot(){let s=1;while(binders.some(b=>b.slot===s))s++;return s}
+        function edit(id){openModal(id)}
+        function toggle(id){let b=binders.find(x=>x.id===id);b.active=!b.active;localStorage.setItem('nb',JSON.stringify(binders));render();toast('info','Статус',b.active?'Включен':'Выключен')}
+        function del(id){if(confirm('Удалить?')){binders=binders.filter(b=>b.id!==id);binders.forEach((b,i)=>b.slot=i+1);localStorage.setItem('nb',JSON.stringify(binders));render();toast('success','Удалено','Бинд удален')}}
+        function setTab(t,btn){curTab=t;document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));btn.classList.add('active');render()}
+
+        function exportData(){
+            const b=new Blob([JSON.stringify(binders,null,2)],{type:'application/json'});
+            const u=URL.createObjectURL(b);
+            const a=document.createElement('a');a.href=u;a.download='nevada_binders.json';a.click();URL.revokeObjectURL(u);toast('success','Экспорт','Файл сохранен');
+        }
+
+        function importData(e){
+            const f=e.target.files[0];if(!f)return;
+            const r=new FileReader();
+            r.onload=(ev)=>{try{const d=JSON.parse(ev.target.result);if(Array.isArray(d)){binders=d;localStorage.setItem('nb',JSON.stringify(binders));render();toast('success','Импорт',`Загружено ${d.length} биндов`)}else throw new Error()}catch(err){toast('error','Ошибка','Неверный формат')}};
+            r.readAsText(f);e.target.value='';
+        }
+
+        function toast(type,title,msg){
+            const t=document.createElement('div');t.className='toast '+type;
+            t.innerHTML=`<span>${type==='success'?'✅':type==='error'?'❌':'ℹ️'}</span><div><div class="toast-title">${title}</div><div class="toast-msg">${msg}</div></div><button onclick="this.parentElement.remove()" style="background:none;border:none;color:var(--text2);cursor:pointer;margin-left:auto">×</button>`;
+            document.getElementById('toasts').appendChild(t);setTimeout(()=>t.remove(),4000);
+        }
+
+        document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();if(e.ctrlKey&&e.key==='n'){e.preventDefault();openModal()}});
+        render();
+    </script>
+</body>
+</html>
